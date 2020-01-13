@@ -6,7 +6,7 @@
     去逛逛
   </view>
   <view style="position:absolute;bottom:10rpx;width:750rpx;">
-    <ad unit-id="adunit-588264b3e2362e1e"></ad>
+    <!-- <ad unit-id="adunit-588264b3e2362e1e"></ad> -->
   </view>
 </template>
 
@@ -39,7 +39,7 @@
       </view>
     </view>
   </view>
-  <ad unit-id="adunit-588264b3e2362e1e"></ad>
+  <!-- <ad unit-id="adunit-588264b3e2362e1e"></ad> -->
   <view class="jiesuan-box">
     <view class="left-price">
       <view class="total" hidden="{{noSelect}}">合计：¥ {{price}} + {{score}} 积分</view>

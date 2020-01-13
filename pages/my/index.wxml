@@ -53,7 +53,7 @@
       <view class='text'>退款/售后</view>
     </view>
   </view>
-  <ad unit-id="adunit-588264b3e2362e1e"></ad> 
+  <!-- <ad unit-id="adunit-588264b3e2362e1e"></ad>  -->
 
   <!-- flex布局的新菜单 -->
   <!-- <view class="menu-item">
@@ -191,7 +191,7 @@
   </view> -->
   
   <view class="space"></view>
-  <view class="version">Powered by EastWorld v {{version}}</view>
+  <view class="version">Powered by 深圳市半岛铁盒科技有限公司 {{version}}</view>
   <view class="space"></view>
 </view>
 
