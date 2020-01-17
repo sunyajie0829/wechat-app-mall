@@ -1,4 +1,4 @@
-<view wx:if="{{isClose}}" class="float-menu-cover" bindtap="open">
+<!-- <view wx:if="{{isClose}}" class="float-menu-cover" bindtap="open">
   <image class="arrows" src="/images/icon/go-l.svg"></image>
   <view class="r">
     <text>快速</text>
@@ -37,4 +37,4 @@
       <text>我的</text>
     </view>
   </navigator>
-</view>
+</view> -->

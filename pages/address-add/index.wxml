@@ -1,5 +1,5 @@
 <view class="container">
-  <button wx:if="{{!addressData}}" type="primary" class="save-btn" bindtap="readFromWx">读取微信地址</button>
+  <!-- <button wx:if="{{!addressData}}" type="primary" class="save-btn" bindtap="readFromWx">读取微信地址</button> -->
     <form bindsubmit="bindSave" report-submit="true">
     <view class="form-box">
         <view class="row-wrap">
