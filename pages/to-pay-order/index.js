@@ -284,7 +284,8 @@ Page({
   radioChange (e) {
     this.setData({
       peisongType: e.detail.value
-    })
+    }),
+    this.processYunfei()
   },
   cancelLogin() {
     wx.navigateBack()
