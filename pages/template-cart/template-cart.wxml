@@ -1,4 +1,5 @@
 <template name="no-goods">
+  <image class="no-goods-icon" src="/images/nav/cart-off.png"></image>
   <view class="title-box">
     购物车空空如也～
   </view>
@@ -11,6 +12,7 @@
 </template>
 
 <template name="cart-goods-list">
+  <!-- <view class="trip">左滑可删除不需要的商品哦～</view> -->
   <view class="goodsList">
     <view class="a-gooods" wx:for="{{items}}" wx:key="key">
       <view class="a-goods-conts {{item.active? 'active':''}}" bindtouchstart="touchS" bindtouchmove="touchM" bindtouchend="touchE" data-index="{{index}}" style="{{item.left}}">
@@ -27,8 +29,8 @@
             </view>
             <view class="goods-price">¥ {{item.price}}</view>
             <view class="buy-num">
-              <view class="jian-btn {{item.number==1? 'disabled' : ''}}" catchtap="jianBtnTap" data-index="{{index}}">-</view>
-              <input type="number" value="{{item.number}}" disabled/>
+              <view class="jian-btn" catchtap="jianBtnTap" data-index="{{index}}">-</view>
+              <input type="number" value="{{item.number}}" data-key="{{item.key}}" bindinput="changeCarNumber"/>
               <view class="jia-btn {{item.number==curTouchGoodStore? 'disabled' : ''}}" catchtap="jiaBtnTap" data-index="{{index}}">+</view>
             </view>
           </view>
@@ -36,6 +38,7 @@
         <view class="delete-btn" data-key="{{item.key}}" catchtap="delItem">
           删除
         </view>
+        <image class="del-icon" src="/images/del.png" data-key="{{item.key}}" catchtap="delItem"></image>
       </view>
     </view>
   </view>

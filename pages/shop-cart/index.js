@@ -19,8 +19,8 @@ Page({
   getEleWidth: function(w) {
     var real = 0;
     try {
-      var res = wx.getSystemInfoSync().windowWidth;
-      var scale = (750 / 2) / (w / 2); //以宽度750px设计稿做宽度的自适应
+      var res = wx.getSystemInfoSync().windowWidth
+      var scale = (750 / 2) / (w / 2)
       // console.log(scale);
       real = Math.floor(res / scale);
       return real;
@@ -116,6 +116,9 @@ Page({
   },
   async delItem(e) {
     const key = e.currentTarget.dataset.key
+    this.delItemDone(key)
+  },
+  async delItemDone(key){
     const token = wx.getStorageSync('token')
     const res = await WXAPI.shippingCarInfoRemoveItem(token, key)
     if (res.code != 0) {
@@ -140,6 +143,15 @@ Page({
     const item = this.data.shippingCarInfo.items[index]
     const number = item.number-1
     if (number <= 0) {
+      // 弹出删除确认
+      wx.showModal({
+        content: '确定要删除该商品吗？',
+        success: (res) => {
+          if (res.confirm) {
+            this.delItemDone(item.key)
+          }
+        }
+      })
       return
     }
     const token = wx.getStorageSync('token')
@@ -161,7 +173,14 @@ Page({
     }
     AUTH.register(this);
   },
-
+  changeCarNumber(e){
+    const key = e.currentTarget.dataset.key
+    const num = e.detail.value
+    const token = wx.getStorageSync('token')
+    WXAPI.shippingCarInfoModifyNumber(token, key, num).then(res => {
+      this.shippingCarInfo()
+    })    
+  },
 
 
 })

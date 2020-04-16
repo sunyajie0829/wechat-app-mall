@@ -1,6 +1,6 @@
 <import src="/template/login/index.wxml" />
 
-<view wx:if="{{ rechargeOpen }}" class="asset">
+<view class="asset">
   <view class='item'>
     <view>可用余额(元)</view>
     <view>{{balance}}</view>
@@ -14,19 +14,19 @@
     <view>{{totleConsumed}}</view>
   </view>
 </view>
-<view wx:if="{{ rechargeOpen }}" class='btn-view'>
-  <form bindsubmit="recharge" report-submit="true">
+<view class='btn-view'>
+  <!-- <form bindsubmit="recharge" report-submit="true">
     <button class="btn" type="default" size="mini" form-type="submit" hover-class="btn-hover" plain="true">
       充值
     </button>
   </form>
   <form bindsubmit="payDeposit" report-submit="true">
-    <button class='btn bth-right' type="default" size="mini" form-type="submit" hover-class="btn-hover" plain="true">
+    <button class='btn' type="default" size="mini" form-type="submit" hover-class="btn-hover" plain="true">
       押金
     </button>
-  </form>
+  </form> -->
   <form bindsubmit="withdraw" report-submit="true">
-    <button class='btn bth-right' type="default" size="mini" form-type="submit" hover-class="btn-hover" plain="true">
+    <button class='btn' type="default" size="mini" form-type="submit" hover-class="btn-hover" plain="true">
       提现
     </button>
   </form>
@@ -45,7 +45,7 @@
       <view class="weui-tab__panel">
         <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
           <view class='no-data' wx:if="{{!cashlogs}}">暂无资金明细~</view>
-          <view class='cashlogs' wx:if="{{cashlogs}}" wx:for-items="{{cashlogs}}" wx:key="{{index}}">
+          <view class='cashlogs' wx:if="{{cashlogs}}" wx:for="{{cashlogs}}" wx:key="{{index}}">
             <view class='profile'>
               <view class='typeStr'>{{ item.typeStr }}</view>
               <view class='dateAdd'>{{ item.dateAdd }}</view>
@@ -55,7 +55,7 @@
         </view>
         <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
           <view class='no-data' wx:if="{{!withDrawlogs}}">暂无提现记录~</view>
-          <view class='cashlogs' wx:if="{{withDrawlogs}}" wx:for-items="{{withDrawlogs}}" wx:key="{{index}}">
+          <view class='cashlogs' wx:if="{{withDrawlogs}}" wx:for="{{withDrawlogs}}" wx:key="{{index}}">
             <view class='profile'>
               <view class='typeStr'>{{ item.statusStr }}</view>
               <view class='dateAdd'>{{ item.dateAdd }}</view>
@@ -65,7 +65,7 @@
         </view>
         <view class="weui-tab__content" hidden="{{activeIndex != 2}}">
           <view class='no-data' wx:if="{{!depositlogs}}">暂无押金记录~</view>
-          <view class='cashlogs' wx:if="{{depositlogs}}" wx:for-items="{{depositlogs}}" wx:key="{{index}}">
+          <view class='cashlogs' wx:if="{{depositlogs}}" wx:for="{{depositlogs}}" wx:key="{{index}}">
             <view class='profile'>
               <view class='typeStr'>{{ item.statusStr }}</view>
               <view class='dateAdd'>{{ item.dateAdd }}</view>

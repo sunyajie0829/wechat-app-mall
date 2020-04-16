@@ -1,7 +1,6 @@
 const app = getApp()
 const WXAPI = require('apifm-wxapi')
 const AUTH = require('../../utils/auth')
-import ApifmLogin from '../../template/login/index.js';
 
 var sliderWidth = 96; // 需要设置slider的宽度，用于计算中间位置
 
@@ -33,7 +32,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    ApifmLogin.init(this)
     const that = this;
     wx.getSystemInfo({
       success: function (res) {
@@ -43,15 +41,6 @@ Page({
         });
       }
     });
-    let rechargeOpen = wx.getStorageSync('RECHARGE_OPEN')
-    if (rechargeOpen && rechargeOpen == "1") {
-      rechargeOpen = true
-    } else {
-      rechargeOpen = false
-    }
-    this.setData({
-      rechargeOpen: rechargeOpen
-    })
   },
 
   /**
@@ -121,14 +110,14 @@ Page({
   },
   cashLogs() {
     const _this = this
-    WXAPI.cashLogs({
+    WXAPI.cashLogsV2({
       token: wx.getStorageSync('token'),
       page:1,
       pageSize:50
     }).then(res => {
       if (res.code == 0) {
         _this.setData({
-          cashlogs: res.data
+          cashlogs: res.data.result
         })
       }
     })
@@ -160,41 +149,6 @@ Page({
         })
       }
     })
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
   },
 
   recharge: function (e) {

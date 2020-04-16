@@ -1,11 +1,14 @@
 {
   "pages": [
+    "pages/start/loading",
     "pages/start/start",
+    "pages/shop/select",
     "pages/index/index",
     "pages/notice/index",
     "pages/notice/show",
     "pages/category/category",
     "pages/goods/list",
+    "pages/goods/fav",
     "pages/goods-details/index",
     "pages/shop-cart/index",
     "pages/to-pay-order/index",
@@ -13,15 +16,16 @@
     "pages/address-add/index",
     "pages/order-list/index",
     "pages/order-details/index",
+    "pages/order-details/scan-result",
     "pages/order/refundApply",
     "pages/wuliu/index",
-    "pages/my/index",    
-    "pages/recharge/index",
+    "pages/my/index",
     "pages/withdraw/index",
-    "pages/kanjia/index",
     "pages/score-excharge/index",
+    "pages/score-excharge/growth",
     "pages/asset/index",
     "pages/score/index",
+    "pages/score/growth",
     "pages/sign/index",
     "pages/maidan/index",
     "pages/fx/apply",
@@ -36,7 +40,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
+    "navigationBarTitleText": "",
     "navigationBarTextStyle": "black",
     "onReachBottomDistance": 50
   },
@@ -72,11 +76,18 @@
       }
     ]
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "获取离你最近的门店"
+    }
+  },
   "navigateToMiniProgramAppIdList": [
     "wxf62a634310753206"
   ],
   "usingComponents": {
-    "float-menu": "/components/float-menu/index"
+    "float-menu": "/components/float-menu/index",
+    "parser":"/components/parser.20200414.min/parser",
+    "van-notice-bar": "@vant/weapp/notice-bar/index"
   },
   "sitemapLocation": "sitemap.json"
 }

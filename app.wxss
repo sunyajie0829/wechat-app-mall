@@ -7,9 +7,6 @@
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-} 
-.wxParse-img {
-  display: block !important;
 }
 .space {
   height:20rpx;
@@ -44,4 +41,7 @@
   font-size:26rpx;
   color:rgba(153,153,153,1);
   margin: 0 16rpx;
+}
+.ad-img {
+  width: 100vw;
 }

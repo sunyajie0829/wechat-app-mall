@@ -11,54 +11,31 @@ Page({
     balance:0.00,
     freeze:0,
     score:0,
+    growth:0,
     score_sign_continuous:0,
     rechargeOpen: false // 是否开启充值[预存]功能
   },
 	onLoad() {
-    let rechargeOpen = wx.getStorageSync('RECHARGE_OPEN')
-    if (rechargeOpen && rechargeOpen == "1") {
-      rechargeOpen = true
-    } else {
-      rechargeOpen = false
-    }
-    this.setData({
-      rechargeOpen: rechargeOpen
-    })
 	},	
   onShow() {
     const _this = this
+    const order_hx_uids = wx.getStorageSync('order_hx_uids')
     this.setData({
       version: CONFIG.version,
-      vipLevel: app.globalData.vipLevel
+      vipLevel: app.globalData.vipLevel,
+      order_hx_uids
     })
     AUTH.checkHasLogined().then(isLogined => {
       this.setData({
         wxlogin: isLogined
       })
-      if (isLogined) {
+      if (isLogined) {        
         _this.getUserApiInfo();
         _this.getUserAmount();
       }
     })
     // 获取购物车数据，显示TabBarBadge
     TOOLS.showTabBarBadge();
-  },
-  onGotUserInfo(e){
-    if (!e.detail.userInfo) {
-      wx.showToast({
-        title: '您已取消登录',
-        icon: 'none',
-      })
-      return;
-    }
-    if (app.globalData.isConnected) {
-      AUTH.register(this);
-    } else {
-      wx.showToast({
-        title: '当前无网络',
-        icon: 'none',
-      })
-    }
   },
   aboutUs : function () {
     wx.showModal({
@@ -82,8 +59,7 @@ Page({
       })
       return;
     }
-    var that = this;
-    WXAPI.bindMobileWxa(wx.getStorageSync('token'), e.detail.encryptedData, e.detail.iv).then(function (res) {
+    WXAPI.bindMobileWxa(wx.getStorageSync('token'), e.detail.encryptedData, e.detail.iv).then(res => {
       if (res.code === 10002) {
         this.setData({
           wxlogin: false
@@ -96,11 +72,11 @@ Page({
           icon: 'success',
           duration: 2000
         })
-        that.getUserApiInfo();
+        this.getUserApiInfo();
       } else {
         wx.showModal({
           title: '提示',
-          content: '绑定失败',
+          content: res.msg,
           showCancel: false
         })
       }
@@ -115,6 +91,9 @@ Page({
         if (res.data.base.mobile) {
           _data.userMobile = res.data.base.mobile
         }
+        if (that.data.order_hx_uids && that.data.order_hx_uids.indexOf(res.data.base.id) != -1) {
+          _data.canHX = true // 具有扫码核销的权限
+        }
         that.setData(_data);
       }
     })
@@ -126,7 +105,8 @@ Page({
         that.setData({
           balance: res.data.balance.toFixed(2),
           freeze: res.data.freeze.toFixed(2),
-          score: res.data.score
+          score: res.data.score,
+          growth: res.data.growth
         });
       }
     })
@@ -165,5 +145,29 @@ Page({
       return;
     }
     AUTH.register(this);
+  },
+  scanOrderCode(){
+    wx.scanCode({
+      onlyFromCamera: true,
+      success(res) {
+        wx.navigateTo({
+          url: '/pages/order-details/scan-result?hxNumber=' + res.result,
+        })
+      },
+      fail(err) {
+        console.error(err)
+        wx.showToast({
+          title: err.errMsg,
+          icon: 'none'
+        })
+      }
+    })
+  },
+  clearStorage(){
+    wx.clearStorageSync()
+    wx.showToast({
+      title: '已清除',
+      icon: 'success'
+    })
   },
 })

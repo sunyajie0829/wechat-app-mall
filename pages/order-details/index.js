@@ -1,18 +1,20 @@
 const app = getApp();
 const CONFIG = require('../../config.js')
 const WXAPI = require('apifm-wxapi')
+import wxbarcode from 'wxbarcode'
+
 Page({
     data:{
       orderId:0,
-      goodsList:[],
-      yunPrice:"0.00",
-      appid: CONFIG.appid
+      goodsList:[]
     },
     onLoad:function(e){
+      // e.id = 478785
       var orderId = e.id;
       this.data.orderId = orderId;
       this.setData({
-        orderId: orderId
+        orderId: orderId,
+        appid: wx.getStorageSync('wxAppid')
       });
     },
     onShow : function () {
@@ -26,20 +28,14 @@ Page({
           })
           return;
         }
+        // 绘制核销码
+        if (res.data.orderInfo.hxNumber && res.data.orderInfo.status > 0) {
+          wxbarcode.qrcode('qrcode', res.data.orderInfo.hxNumber, 650, 650);
+        }        
         that.setData({
           orderDetail: res.data
         });
       })
-      var yunPrice = parseFloat(this.data.yunPrice);
-      var allprice = 0;
-      var goodsList = this.data.goodsList;
-      for (var i = 0; i < goodsList.length; i++) {
-        allprice += parseFloat(goodsList[0].price) * goodsList[0].number;
-      }
-      this.setData({
-        allGoodsPrice: allprice,
-        yunPrice: yunPrice
-      });
     },
     wuliuDetailsTap:function(e){
       var orderId = e.currentTarget.dataset.id;

@@ -58,9 +58,15 @@ Page({
         key: 'app_show_pic_version',
         data: CONFIG.version
       })
-      wx.switchTab({
-        url: '/pages/index/index',
-      });
+      if (CONFIG.shopMod) {
+        wx.redirectTo({
+          url: '/pages/shop/select',
+        });
+      } else {
+        wx.switchTab({
+          url: '/pages/index/index',
+        });
+      }
     } else {
       wx.showToast({
         title: '当前无网络',

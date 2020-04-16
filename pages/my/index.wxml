@@ -7,9 +7,9 @@
 	</view>
   <view wx:else class="userinfo" style="margin-bottom:50rpx;">
 		<image class="userinfo-avatar" src="/images/nologin.png" background-size="cover"></image>
-		<button class="weui-btn mini-btn" plain="true" size="mini" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">点击登录账户</button>
+		<button class="weui-btn mini-btn" plain="true" size="mini" bindtap="goLogin">立即登录</button>
 	</view>
-  <view wx:if="{{ rechargeOpen }}" class="asset">
+  <view class="asset">
     <view class='item' bindtap='goAsset'>
       <view>{{balance}}</view>
       <view>余额</view>
@@ -22,6 +22,12 @@
       <view>{{score}}</view>
       <view>积分</view>
     </view>
+    <navigator url="/pages/score/growth">
+      <view class='item right'>
+        <view>{{growth}}</view>
+        <view>成长值</view>
+      </view>
+    </navigator>
   </view>
   <view class="space"></view>
   <navigator url="/pages/order-list/index">
@@ -32,6 +38,7 @@
   </navigator>
   <view class="line"></view>
   <view class='order-shortcut'>
+    <!-- https://www.iconfont.cn/collections/detail?spm=a313x.7781069.0.da5a778a4&cid=2767 -->
     <view class='item' bindtap='goOrder' data-type="0">
       <image class="icon" src="/images/order/topay.png" background-size="cover"></image>
       <view class='text'>待付款</view>
@@ -50,11 +57,10 @@
     </view>
     <view class='item' bindtap='goOrder' data-type="99">
       <image class="icon" src="/images/order/shouhou.png" background-size="cover"></image>
-      <view class='text'>退款/售后</view>
+      <view class='text'>售后</view>
     </view>
   </view>
   <!-- <ad unit-id="adunit-588264b3e2362e1e"></ad>  -->
-
   <!-- flex布局的新菜单 -->
   <!-- <view class="menu-item">
     <view class="l">我的订单</view>
@@ -89,14 +95,14 @@
     <view wx:if="{{apiUserInfoMap.base.isSeller}}" class="line"></view>
     <navigator wx:if="{{apiUserInfoMap.base.isSeller}}" url="/pages/fx/members">
       <view class="menu-item">
-        <view class="l">我的团队</view>
+        <view class="l">销售团队</view>
         <image class="next" src="/images/icon/next.png"></image>
       </view>
     </navigator>
     <view wx:if="{{apiUserInfoMap.base.isSeller}}" class="line"></view>
     <navigator wx:if="{{apiUserInfoMap.base.isSeller}}" url="/pages/fx/commisionLog">
       <view class="menu-item">
-        <view class="l">返佣明细</view>
+        <view class="l">佣金明细</view>
         <image class="next" src="/images/icon/next.png"></image>
       </view>
     </navigator>
@@ -105,47 +111,19 @@
   <view class="space"></view>
   <navigator url="/pages/invoice/apply">
     <view class="menu-item">
-      <view class="l">申请开票</view>
+      <view class="l">申请发票</view>
       <image class="next" src="/images/icon/next.png"></image>
     </view>
   </navigator>
   <view class="line"></view>
   <navigator url="/pages/invoice/list">
     <view class="menu-item">
-      <view class="l">开票记录</view>
+      <view class="l">发票记录</view>
       <image class="next" src="/images/icon/next.png"></image>
     </view>
   </navigator>
 
-  <view class="space"></view>
-  <navigator url="/pages/maidan/index">
-    <view class="menu-item">
-      <view class="l">优惠买单</view>
-      <image class="next" src="/images/icon/next.png"></image>
-    </view>
-  </navigator>
-  <view class="line"></view>
-  <navigator url="/pages/asset/index">
-    <view class="menu-item">
-      <view class="l">资金明细</view>
-      <image class="next" src="/images/icon/next.png"></image>
-    </view>
-  </navigator>
-  <view class="line"></view>
-  <navigator url="/pages/sign/index">
-    <view class="menu-item">
-      <view class="l">每日签到</view>
-      <image class="next" src="/images/icon/next.png"></image>
-    </view>
-  </navigator>
-  <view class="line"></view>
-  <navigator url="/pages/score-excharge/index">
-    <view class="menu-item">
-      <view class="l">积分兑换</view>
-      <image class="next" src="/images/icon/next.png"></image>
-    </view>
-  </navigator>
-  <view class="line"></view>
+  <view class="space"></view>  
   <navigator url="/pages/select-address/index">
     <view class="menu-item">
       <view class="l">收货地址</view>
@@ -159,6 +137,36 @@
       <image class="next" src="/images/icon/next.png"></image>
     </view>
   </navigator>
+  <view class="line"></view>
+  <navigator url="/pages/goods/fav">
+    <view class="menu-item">
+      <view class="l">我的收藏</view>
+      <image class="next" src="/images/icon/next.png"></image>
+    </view>
+  </navigator>
+
+  <view class="space"></view>
+  <navigator url="/pages/sign/index">
+    <view class="menu-item">
+      <view class="l">每日签到</view>
+      <image class="next" src="/images/icon/next.png"></image>
+    </view>
+  </navigator>
+  <view class="line"></view>
+  <navigator url="/pages/score-excharge/index">
+    <view class="menu-item">
+      <view class="l">积分卷兑换积分</view>
+      <image class="next" src="/images/icon/next.png"></image>
+    </view>
+  </navigator>
+  <view class="line"></view>
+  <navigator url="/pages/score-excharge/growth">
+    <view class="menu-item">
+      <view class="l">积分兑换成长值</view>
+      <image class="next" src="/images/icon/next.png"></image>
+    </view>
+  </navigator>
+  <view class="line"></view>
 
   <view class="space"></view>
   <view class="menu-item" bindtap="aboutUs">
@@ -173,6 +181,11 @@
   <view  wx:else class="menu-item">
     <view class="l">绑定手机</view>
     <button type="primary" size="mini" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">立即绑定</button>
+  </view>
+  <view class="line"></view>
+  <view class="menu-item" bindtap="clearStorage">
+    <view class="l">清除缓存</view>
+    <image class="next" src="/images/icon/next.png"></image>
   </view>
   <view class="line"></view>
   <view wx:if="{{apiUserInfoMap}}" class="menu-item" bindtap="loginOut">

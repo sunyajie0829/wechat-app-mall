@@ -95,7 +95,7 @@ module.exports =
 /* eslint-disable */
 // 小程序开发api接口工具包，https://github.com/gooking/wxapi
 var API_BASE_URL = 'https://api.it120.cc';
-var subDomain = 'tz';
+var subDomain = '-';
 
 var request = function request(url, needSubDomain, method, data) {
   var _url = API_BASE_URL + (needSubDomain ? '/' + subDomain : '') + url;
@@ -184,18 +184,25 @@ module.exports = {
       token: token
     });
   },
+  scoreExchangeCash: function scoreExchangeCash(token, deductionScore) {
+    return request('/score/exchange/cash', true, 'post', {
+      deductionScore: deductionScore,
+      token: token
+    });
+  },
   scoreLogs: function scoreLogs(data) {
     return request('/score/logs', true, 'post', data);
   },
-  shareGroupGetScore: function shareGroupGetScore(referrer, encryptedData, iv) {
+  shareGroupGetScore: function shareGroupGetScore(code, referrer, encryptedData, iv) {
     return request('/score/share/wxa/group', true, 'post', {
+      code: code,
       referrer: referrer,
       encryptedData: encryptedData,
       iv: iv
     });
   },
   kanjiaSet: function kanjiaSet(goodsId) {
-    return request('/shop/goods/kanjia/set', true, 'get', { goodsId: goodsId });
+    return request('/shop/goods/kanjia/set/v2', true, 'get', { goodsId: goodsId });
   },
   kanjiaJoin: function kanjiaJoin(token, kjid) {
     return request('/shop/goods/kanjia/join', true, 'post', {
@@ -243,6 +250,11 @@ module.exports = {
       token: token
     });
   },
+  checkReferrer: function checkReferrer(referrer) {
+    return request('/user/check-referrer', true, 'get', {
+      referrer: referrer
+    });
+  },
   addTempleMsgFormid: function addTempleMsgFormid(token, type, formId) {
     return request('/template-msg/wxa/formId', true, 'post', {
       token: token, type: type, formId: formId
@@ -253,6 +265,12 @@ module.exports = {
   },
   wxpay: function wxpay(data) {
     return request('/pay/wx/wxapp', true, 'post', data);
+  },
+  ttpay: function ttpay(data) {
+    return request('/pay/tt/microapp', true, 'post', data);
+  },
+  payQuery: function payQuery(token, outTradeId) {
+    return request('/pay/query', true, 'get', { token: token, outTradeId: outTradeId });
   },
   wxpaySaobei: function wxpaySaobei(data) {
     return request('/pay/lcsw/wxapp', true, 'post', data);
@@ -267,6 +285,13 @@ module.exports = {
     return request('/user/wxapp/login', true, 'post', {
       code: code,
       type: 2
+    });
+  },
+  loginWxaMobile: function loginWxaMobile(code, encryptedData, iv) {
+    return request('/user/wxapp/login/mobile', true, 'post', {
+      code: code,
+      encryptedData: encryptedData,
+      iv: iv
     });
   },
   login_username: function login_username(data) {
@@ -524,9 +549,12 @@ module.exports = {
     return request('/order/list', true, 'post', data);
   },
   orderDetail: function orderDetail(token, id) {
+    var hxNumber = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
     return request('/order/detail', true, 'get', {
       id: id,
-      token: token
+      token: token,
+      hxNumber: hxNumber
     });
   },
   orderDelivery: function orderDelivery(token, orderId) {
@@ -598,6 +626,9 @@ module.exports = {
   cashLogs: function cashLogs(data) {
     return request('/user/cashLog', true, 'post', data);
   },
+  cashLogsV2: function cashLogsV2(data) {
+    return request('/user/cashLog/v2', true, 'post', data);
+  },
   payLogs: function payLogs(data) {
     return request('/user/payLogs', true, 'post', data);
   },
@@ -629,6 +660,8 @@ module.exports = {
     return request('/qrcode/wxa/unlimit', true, 'post', data);
   },
   uploadFile: function uploadFile(token, tempFilePath) {
+    var expireHours = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+
     var uploadUrl = API_BASE_URL + '/' + subDomain + '/dfs/upload/file';
     return new Promise(function (resolve, reject) {
       wx.uploadFile({
@@ -636,7 +669,8 @@ module.exports = {
         filePath: tempFilePath,
         name: 'upfile',
         formData: {
-          'token': token
+          'token': token,
+          expireHours: expireHours
         },
         success: function success(res) {
           resolve(JSON.parse(res.data));
@@ -751,6 +785,9 @@ module.exports = {
   modifyUserInfo: function modifyUserInfo(data) {
     return request('/user/modify', true, 'post', data);
   },
+  modifyUserPassword: function modifyUserPassword(token, pwdOld, pwdNew) {
+    return request('/user/modify/password', true, 'post', { token: token, pwdOld: pwdOld, pwdNew: pwdNew });
+  },
   uniqueId: function uniqueId() {
     var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
@@ -762,7 +799,7 @@ module.exports = {
     return request('/barcode/info', true, 'get', { barcode: barcode });
   },
   luckyInfo: function luckyInfo(id) {
-    return request('/luckyInfo/info', true, 'get', { id: id });
+    return request('/luckyInfo/info/v2', true, 'get', { id: id });
   },
   luckyInfoJoin: function luckyInfoJoin(id, token) {
     return request('/luckyInfo/join', true, 'post', { id: id, token: token });
@@ -907,7 +944,9 @@ module.exports = {
     });
   },
   scoreDeductionRules: function scoreDeductionRules() {
-    return request('/score/deduction/rules', true, 'get', {});
+    var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+    return request('/score/deduction/rules', true, 'get', { type: type });
   },
   voteItems: function voteItems(data) {
     return request('/vote/items', true, 'post', data);
@@ -985,6 +1024,12 @@ module.exports = {
   siteStatistics: function siteStatistics() {
     return request('/site/statistics', true, 'get');
   },
+  goodsDynamic: function goodsDynamic(type) {
+    return request('/site/goods/dynamic', true, 'get', { type: type });
+  },
+  fetchSubDomainByWxappAppid: function fetchSubDomainByWxappAppid(appid) {
+    return request('/subdomain/appid/wxapp', false, 'get', { appid: appid });
+  },
   cmsArticleFavPut: function cmsArticleFavPut(token, newsId) {
     return request('/cms/news/fav/add', true, 'post', { token: token, newsId: newsId });
   },
@@ -1023,6 +1068,22 @@ module.exports = {
   shippingCarInfoRemoveAll: function shippingCarInfoRemoveAll(token) {
     return request('/shopping-cart/empty', true, 'post', {
       token: token
+    });
+  },
+  growthLogs: function growthLogs(data) {
+    return request('/growth/logs', true, 'post', data);
+  },
+  exchangeScoreToGrowth: function exchangeScoreToGrowth(token, deductionScore) {
+    return request('/growth/exchange', true, 'post', {
+      token: token, deductionScore: deductionScore
+    });
+  },
+  wxaMpLiveRooms: function wxaMpLiveRooms() {
+    return request('/wx/live/rooms', true, 'get');
+  },
+  wxaMpLiveRoomHisVedios: function wxaMpLiveRoomHisVedios(roomId) {
+    return request('/wx/live/his', true, 'get', {
+      roomId: roomId
     });
   }
 };

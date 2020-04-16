@@ -1,38 +1,45 @@
 @import "/template/login/index.wxss";
 
+page,view,image,input,textarea {
+  display: block;
+  box-sizing: border-box;
+}
+
 .container {
   background-color: #f2f2f2;
   padding-bottom: 100rpx;
 }
 
 .address-box {
-  width: 100%;
-  background: url(https://cdn.it120.cc/images/weappshop/arrow-right.png) no-repeat 705rpx center,
-                url(https://cdn.it120.cc/images/weappshop/addr-line.png) no-repeat center bottom;
-  background-size: 16rpx auto, 750rpx auto;
-  background-color: #fff;
+  width: 100vw;
   margin: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
 }
 
-.add-addres {
-  width: 100%;
+.add-address {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  padding-left: 32rpx;
 }
-
-.add-address .title {
+.add-address image {
+  width: 40rpx;
+  height: 40rpx;
+}
+.add-address view {
+  margin-left: 16rpx;
   font-size: 28rpx;
   color: #000;
-  margin-left: 30rpx;
-  background: url(https://cdn.it120.cc/images/weappshop/ico-add-addr.png) no-repeat left center;
-  background-size: 60rpx auto;
-  padding: 40rpx 0 40rpx 90rpx;
+  padding: 40rpx 0;
 }
 
 .show-address {
-  width: 664rpx;
+  width: 750rpx;
   box-sizing: border-box;
-  padding-left: 100rpx;
-  background: url(https://cdn.it120.cc/images/weappshop/ico-addr.png) no-repeat 30rpx 35rpx;
-  background-size: 30rpx auto;
+  padding: 0 32rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .show-address .name-tel {
@@ -46,6 +53,10 @@
   color: #888;
   padding-bottom: 34rpx;
   line-height: 36rpx;
+}
+.show-address .next {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 form {
@@ -143,9 +154,12 @@ form {
   border-bottom: 1rpx solid #eee;
 }
 
+.peisong-way .row-label.t {
+  color: #333;
+}
 .peisong-way .row-label {
   font-size: 28rpx;
-  color: #000;
+  color: #666;
 }
 
 .peisong-way .right-text {
@@ -179,6 +193,10 @@ form {
 
 .goods-info .row-box .right-text {
   text-align: right;
+}
+.row-box .next {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .jiesuan-box {
@@ -219,3 +237,4 @@ form {
   color: #e64340;
   text-align: right;
 }
+

@@ -28,9 +28,13 @@ Page({
   },
 
   tabClick: function(e) {
-    wx.navigateTo({
-      url: '/pages/goods/list?categoryId=' + e.currentTarget.id,
+    wx.setStorageSync("_categoryId", e.currentTarget.id)
+    wx.switchTab({
+      url: '/pages/category/category',
     })
+    // wx.navigateTo({
+    //   url: '/pages/goods/list?categoryId=' + e.currentTarget.id,
+    // })
   },
   toDetailsTap: function(e) {
     wx.navigateTo({
@@ -38,9 +42,18 @@ Page({
     })
   },
   tapBanner: function(e) {
-    if (e.currentTarget.dataset.id != 0) {
+    const url = e.currentTarget.dataset.url
+    if (url) {
       wx.navigateTo({
-        url: "/pages/goods-details/index?id=" + e.currentTarget.dataset.id
+        url
+      })
+    }
+  },
+  adClick: function(e) {
+    const url = e.currentTarget.dataset.url
+    if (url) {
+      wx.navigateTo({
+        url
       })
     }
   },
@@ -49,47 +62,15 @@ Page({
       selectCurrent: e.index
     })
   },
-  onLoad: function(e) {   
+  onLoad: function(e) {
     wx.showShareMenu({
       withShareTicket: true
-    }) 
+    })    
     const that = this
-    // if (e && e.query && e.query.inviter_id) { 
-    //   wx.setStorageSync('referrer', e.query.inviter_id)
-    // }
-    if (e && e.scene) {
-      const scene = decodeURIComponent(e.scene)
-      if (scene) {        
-        wx.setStorageSync('referrer', scene.substring(11))
-      }
-    }
     wx.setNavigationBarTitle({
       title: wx.getStorageSync('mallName')
     })
-    /**
-     * 示例：
-     * 调用接口封装方法
-     */
-    WXAPI.banners({
-      type: 'index'
-    }).then(function(res) {
-      if (res.code == 700) {
-        wx.showModal({
-          title: '提示',
-          content: '请在后台添加 banner 轮播图片，自定义类型填写 index',
-          showCancel: false
-        })
-      } else {
-        that.setData({
-          banners: res.data
-        });
-      }
-    }).catch(function(e) {
-      wx.showToast({
-        title: res.msg,
-        icon: 'none'
-      })
-    })
+    this.initBanners()
     this.categories()
     WXAPI.goods({
       recommendStatus: 1
@@ -104,10 +85,48 @@ Page({
     that.getNotice()
     that.kanjiaGoods()
     that.pingtuanGoods()
+    this.wxaMpLiveRooms()
+  },
+  async wxaMpLiveRooms(){
+    const res = await WXAPI.wxaMpLiveRooms()
+    if (res.code == 0 && res.data.length > 0) {
+      this.setData({
+        aliveRooms: res.data
+      })
+    }
+  },
+  async initBanners(){
+    const _data = {}
+    // 读取头部轮播图
+    const res1 = await WXAPI.banners({
+      type: 'index'
+    })
+    if (res1.code == 700) {
+      wx.showModal({
+        title: '提示',
+        content: '请在后台添加 banner 轮播图片，自定义类型填写 index',
+        showCancel: false
+      })
+    } else {
+      _data.banners = res1.data
+    }
+    this.setData(_data)
   },
   onShow: function(e){
+    this.setData({
+      shopInfo: wx.getStorageSync('shopInfo')
+    })
     // 获取购物车数据，显示TabBarBadge
-    TOOLS.showTabBarBadge();
+    TOOLS.showTabBarBadge()
+    this.goodsDynamic()
+  },
+  async goodsDynamic(){
+    const res = await WXAPI.goodsDynamic(0)
+    if (res.code == 0) {
+      this.setData({
+        goodsDynamic: res.data
+      })
+    }
   },
   async categories(){
     const res = await WXAPI.goodsCategory()
@@ -180,7 +199,7 @@ Page({
   onShareAppMessage: function() {    
     return {
       title: '"' + wx.getStorageSync('mallName') + '" ' + CONFIG.shareProfile,
-      path: '/pages/index/index?inviter_id=' + wx.getStorageSync('uid')
+      path: '/pages/start/loading?inviter_id=' + wx.getStorageSync('uid') + '&route=/pages/index/index'
     }
   },
   getNotice: function() {
@@ -212,9 +231,27 @@ Page({
       kanjia: true
     });
     if (res.code == 0) {
-      this.setData({
-        kanjiaList: res.data
+      const kanjiaGoodsIds = []
+      res.data.forEach(ele => {
+        kanjiaGoodsIds.push(ele.id)
       })
+      const goodsKanjiaSetRes = await WXAPI.kanjiaSet(kanjiaGoodsIds.join())
+      if (goodsKanjiaSetRes.code == 0) {
+        res.data.forEach(ele => {
+          const _process = goodsKanjiaSetRes.data.find(_set => {
+            console.log(_set)
+            return _set.goodsId == ele.id
+          })
+          console.log(ele)
+          console.log(_process)
+          if (_process) {
+            ele.process = 100 * _process.numberBuy / _process.number
+          }
+        })
+        this.setData({
+          kanjiaList: res.data
+        })
+      }
     }
   },
   goCoupons: function (e) {
