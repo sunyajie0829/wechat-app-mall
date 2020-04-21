@@ -204,7 +204,7 @@
   </view> -->
   
   <view class="space"></view>
-  <view class="version">Powered by 深圳市半岛铁盒科技有限公司 {{version}}</view>
+  <view class="version">Powered by 东莞市玮韵环保科技有限公司 {{version}}</view>
   <view class="space"></view>
 </view>
 

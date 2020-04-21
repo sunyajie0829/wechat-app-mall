@@ -40,7 +40,7 @@ Page({
   aboutUs : function () {
     wx.showModal({
       title: '关于我们',
-      content: '深圳市半岛铁盒科技有限公司\n客服电话:18129523534',
+      content: '东莞市玮韵环保科技有限公司\n客服电话:13532568820',
       showCancel:false
     })
   },
