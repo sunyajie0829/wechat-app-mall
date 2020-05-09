@@ -1,9 +1,14 @@
 const WXAPI = require('apifm-wxapi')
-const CONFIG = require('../../config.js')
 const TOOLS = require('../../utils/tools.js')
 
-//获取应用实例
-var app = getApp()
+const APP = getApp()
+// fixed首次打开不显示标题的bug
+APP.configLoadOK = () => {
+  wx.setNavigationBarTitle({
+    title: wx.getStorageSync('mallName')
+  })
+}
+
 Page({
   data: {
     inputVal: "", // 搜索框内容
@@ -67,6 +72,12 @@ Page({
       withShareTicket: true
     })    
     const that = this
+    if (e && e.scene) {
+      const scene = decodeURIComponent(e.scene)
+      if (scene) {        
+        wx.setStorageSync('referrer', scene.substring(11))
+      }
+    }
     wx.setNavigationBarTitle({
       title: wx.getStorageSync('mallName')
     })
@@ -85,7 +96,26 @@ Page({
     that.getNotice()
     that.kanjiaGoods()
     that.pingtuanGoods()
-    this.wxaMpLiveRooms()
+    this.wxaMpLiveRooms()    
+  },
+  async miaoshaGoods(){
+    const res = await WXAPI.goods({
+      miaosha: true
+    })
+    if (res.code == 0) {
+      res.data.forEach(ele => {
+        const _now = new Date().getTime()
+        if (ele.dateStart) {
+          ele.dateStartInt = new Date(ele.dateStart).getTime() - _now
+        }
+        if (ele.dateEnd) {
+          ele.dateEndInt = new Date(ele.dateEnd).getTime() -_now
+        }
+      })
+      this.setData({
+        miaoshaGoods: res.data
+      })
+    }
   },
   async wxaMpLiveRooms(){
     const res = await WXAPI.wxaMpLiveRooms()
@@ -119,6 +149,7 @@ Page({
     // 获取购物车数据，显示TabBarBadge
     TOOLS.showTabBarBadge()
     this.goodsDynamic()
+    this.miaoshaGoods()
   },
   async goodsDynamic(){
     const res = await WXAPI.goodsDynamic(0)
@@ -159,7 +190,6 @@ Page({
     })
     const res = await WXAPI.goods({
       categoryId: categoryId,
-      nameLike: this.data.inputVal,
       page: this.data.curPage,
       pageSize: this.data.pageSize
     })
@@ -198,8 +228,8 @@ Page({
   },
   onShareAppMessage: function() {    
     return {
-      title: '"' + wx.getStorageSync('mallName') + '" ' + CONFIG.shareProfile,
-      path: '/pages/start/loading?inviter_id=' + wx.getStorageSync('uid') + '&route=/pages/index/index'
+      title: '"' + wx.getStorageSync('mallName') + '" ' + wx.getStorageSync('share_profile'),
+      path: '/pages/index/index?inviter_id=' + wx.getStorageSync('uid')
     }
   },
   getNotice: function() {
@@ -284,4 +314,9 @@ Page({
       url: '/pages/goods/list?name=' + this.data.inputVal,
     })
   },
+  goSearch(){
+    wx.navigateTo({
+      url: '/pages/goods/list?name=' + this.data.inputVal,
+    })
+  }
 })
