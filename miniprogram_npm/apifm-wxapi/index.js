@@ -462,6 +462,11 @@ module.exports = {
       token: token
     });
   },
+  queryStores: function queryStores(token) {
+    return request('/shop/subshop/list', true, 'post', {
+      token: token
+    });
+  },
   defaultAddress: function defaultAddress(token) {
     return request('/user/shipping-address/default/v2', true, 'get', {
       token: token

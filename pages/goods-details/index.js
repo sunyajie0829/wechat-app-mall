@@ -411,7 +411,7 @@ Page({
     if (shoptype == 'toPingtuan') {
       if (this.data.pingtuanopenid) {
         wx.navigateTo({
-          url: "/pages/to-pay-order/index?orderType=buyNow&pingtuanOpenId=" + this.data.pingtuanopenid
+          url: "/pages/to-pay-order-distribution/index?orderType=buyNow&pingtuanOpenId=" + this.data.pingtuanopenid
         })
       } else {
         WXAPI.pingtuanOpen(wx.getStorageSync('token'), that.data.goodsDetail.basicInfo.id).then(function(res) {
@@ -430,13 +430,13 @@ Page({
             return
           }
           wx.navigateTo({
-            url: "/pages/to-pay-order/index?orderType=buyNow&pingtuanOpenId=" + res.data.id
+            url: "/pages/to-pay-order-distribution/index?orderType=buyNow&pingtuanOpenId=" + res.data.id
           })
         })
       }
     } else {
       wx.navigateTo({
-        url: "/pages/to-pay-order/index?orderType=buyNow"
+        url: "/pages/to-pay-order-distribution/index?orderType=buyNow"
       })
     }
 
@@ -579,7 +579,7 @@ Page({
   joinPingtuan: function(e) {
     let pingtuanopenid = e.currentTarget.dataset.pingtuanopenid
     wx.navigateTo({
-      url: "/pages/to-pay-order/index?orderType=buyNow&pingtuanOpenId=" + pingtuanopenid
+      url: "/pages/to-pay-order-distribution/index?orderType=buyNow&pingtuanOpenId=" + pingtuanopenid
     })
   },
   goIndex() {

@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="address-list">
+    <view class="a-address" wx:for="{{addressList}}" wx:key="id">
+      <view class="left-text" bindtap="selectTap" data-id="{{item.id}}">
+        <view class="address-box">
+          {{item.name}}
+        </view>
+        <view class="name-tel">
+          联系方式:{{item.linkPhone}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
