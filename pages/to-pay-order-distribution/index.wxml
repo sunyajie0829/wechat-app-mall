@@ -26,9 +26,10 @@
     <view class="row-box" wx:if="{{isNeedLogistics > 0}}">
       <view class="row-label">配送方式</view>
       <radio-group bindchange="radioChange">
-        <label class="radio">
+      <!-- 关闭送货上门,只提供到店自取 -->
+        <!-- <label class="radio">
           <radio value="kd" checked="{{peisongType == 'kd'}}" /> 送货上门
-        </label>
+        </label> -->
         <label class="radio">
           <radio value="zq" checked="{{peisongType == 'zq'}}" /> 到店自取
         </label>
@@ -57,7 +58,9 @@
       <view class="show-take-delivery-address" hidden="{{!curTakeDeliveryAddressData}}" bindtap="selectTakeDeliveryAddress">
         <view class="l">
           <view class="name-tel">{{curTakeDeliveryAddressData.name}}</view>
-          <view class="addr-text">联系方式:{{curTakeDeliveryAddressData.linkPhone}}</view>
+          <view class="addr-text">
+            <text space="nbsp">联系方式:{{curTakeDeliveryAddressData.linkPhone}}    距离:{{curTakeDeliveryAddressData.distance}}km</text>
+          </view>
         </view>
         <view class="r">
           <image class="next" src="/images/icon/next.png"></image>

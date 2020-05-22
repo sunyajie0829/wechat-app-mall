@@ -36,6 +36,25 @@ Page({
       }
     })
   },
+  async fetchShops(latitude, longitude){
+    const res = await WXAPI.fetchShops({
+      curlatitude: latitude,
+      curlongitude: longitude
+    })
+    if (res.code == 0) {
+      res.data.forEach(ele => {
+        ele.distance = ele.distance.toFixed(3) // 距离保留3位小数
+      })
+      this.setData({
+        curTakeDeliveryAddressData: res.data[0] //默认选择距离最近的门店
+      })
+      this.processYunfei();
+    } else {
+      this.setData({
+        shops: null
+      })
+    }
+  },
   async doneShow() {
     let shopList = [];
     const token = wx.getStorageSync('token')
@@ -57,13 +76,8 @@ Page({
       goodsList: shopList,
       peisongType: this.data.peisongType
     });
-    if (this.peisongType == 'kd'){
-      this.initShippingAddress()
-    }else if(this.peisongType = 'zq'){
-      this.initTakeDeliveryAddress()
-    }
+    this.processYunfei();
   },
-
   onLoad(e) {
     let _data = {
       isNeedLogistics: 1
@@ -75,8 +89,27 @@ Page({
       _data.pingtuanOpenId = e.pingtuanOpenId
     }
     this.setData(_data);
+    this.doneLoad();
   },
-
+  async doneLoad(){
+    wx.getLocation({
+      type: 'wgs84', //wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
+      success: (res) => {
+        this.data.latitude = res.latitude
+        this.data.longitude = res.longitude
+        this.fetchShops(res.latitude, res.longitude)
+      },
+      fail(e){
+        console.error(e)
+        AUTH.checkAndAuthorize('scope.userLocation')
+      }
+    })
+    // if (this.peisongType == 'kd'){
+    //   this.initShippingAddress()
+    // }else if(this.peisongType = 'zq'){
+    //   this.initTakeDeliveryAddress()
+    // }
+  },
   getDistrictId: function (obj, aaa) {
     if (!obj) {
       return "";
@@ -90,6 +123,14 @@ Page({
     this.data.remark = e.detail.value
   },
   goCreateOrder(){
+    if(this.data.curTakeDeliveryAddressData == null){
+      wx.hideLoading();
+      wx.showToast({
+        title: '请选择自提门店',
+        icon: 'none'
+      })
+      return;
+    }
     const subscribe_ids = wx.getStorageSync('subscribe_ids')
     if (subscribe_ids) {
       wx.requestSubscribeMessage({
@@ -125,26 +166,32 @@ Page({
     if (that.data.pingtuanOpenId) {
       postData.pingtuanOpenId = that.data.pingtuanOpenId
     }
-    if (that.data.isNeedLogistics > 0 && postData.peisongType == 'kd') {
-      if (!that.data.curAddressData) {
-        wx.hideLoading();
-        wx.showToast({
-          title: '请设置收货地址',
-          icon: 'none'
-        })
+    // if (that.data.isNeedLogistics > 0 && postData.peisongType == 'kd') {
+    //   if (!that.data.curAddressData) {
+    //     wx.hideLoading();
+    //     wx.showToast({
+    //       title: '请设置收货地址',
+    //       icon: 'none'
+    //     })
+    //     return;
+    //   }
+    //   if (postData.peisongType == 'kd') {
+    //     postData.provinceId = that.data.curAddressData.provinceId;
+    //     postData.cityId = that.data.curAddressData.cityId;
+    //     if (that.data.curAddressData.districtId) {
+    //       postData.districtId = that.data.curAddressData.districtId;
+    //     }
+    //     postData.address = that.data.curAddressData.address;
+    //     postData.linkMan = that.data.curAddressData.linkMan;
+    //     postData.mobile = that.data.curAddressData.mobile;
+    //     postData.code = that.data.curAddressData.code;
+    //   }      
+    // }
+    if(postData.peisongType == 'zq' && that.data.curTakeDeliveryAddressData != null){
+      postData.shopIdZt = that.data.curTakeDeliveryAddressData.id;
+      postData.shopNameZt = that.data.curTakeDeliveryAddressData.name;
+    }else{
         return;
-      }
-      if (postData.peisongType == 'kd') {
-        postData.provinceId = that.data.curAddressData.provinceId;
-        postData.cityId = that.data.curAddressData.cityId;
-        if (that.data.curAddressData.districtId) {
-          postData.districtId = that.data.curAddressData.districtId;
-        }
-        postData.address = that.data.curAddressData.address;
-        postData.linkMan = that.data.curAddressData.linkMan;
-        postData.mobile = that.data.curAddressData.mobile;
-        postData.code = that.data.curAddressData.code;
-      }      
     }
     if (that.data.curCoupon) {
       postData.couponId = that.data.curCoupon.id;
@@ -216,32 +263,22 @@ Page({
     }
     this.processYunfei();
   },
-  async initTakeDeliveryAddress() {
-    var token = wx.getStorageSync('token');
-    var that = this;
-    WXAPI.queryStores(token).then(function(res) {
-      if (res.code == 0 && res.data.length > 0) {
-        that.setData({
-          curTakeDeliveryAddressData: res.data[0]
-        });
-      } else if (res.code == 700) {
-        that.setData({
-          curTakeDeliveryAddressData: null
-        });
-      }
-    })
-    // const res = await WXAPI.defaultAddress(wx.getStorageSync('token'))
-    // if (res.code == 0) {
-    //   this.setData({
-    //     curTakeDeliveryAddressData: res.data.info
-    //   });
-    // } else {
-    //   this.setData({
-    //     curTakeDeliveryAddressData: null
-    //   });
-    // }
-    this.processYunfei();
-  },
+  // async initTakeDeliveryAddress() {
+  //   var token = wx.getStorageSync('token');
+  //   var that = this;
+  //   WXAPI.queryStores(token).then(function(res) {
+  //     if (res.code == 0 && res.data.length > 0) {
+  //       that.setData({
+  //         curTakeDeliveryAddressData: res.data[0]
+  //       });
+  //     } else if (res.code == 700) {
+  //       that.setData({
+  //         curTakeDeliveryAddressData: null
+  //       });
+  //     }
+  //   })
+  //   this.processYunfei();
+  // },
   processYunfei() {    
     var goodsList = this.data.goodsList
     if (goodsList.length == 0) {
