@@ -28,7 +28,8 @@
       <view class="goods-info">
         <view class="goods-des">
           <view class="remark" wx:if="{{item.remark && item.remark != ''}}">{{item.remark}}</view>
-          <view>{{item.dateAdd}} </view>
+          <view>订单时间:{{item.dateAdd}} </view>
+          <view class="pick-up-code" wx:if="{{item.qudanhao && item.qudanhao != ''}}">取件码:{{item.qudanhao}} </view>
         </view>
       </view>
       <view class="price-box">

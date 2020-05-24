@@ -220,7 +220,8 @@
 .goods-box .goods-price{
   width: 280rpx;
   overflow: hidden;
-  font-size: 24rpx;
+  font-size: 32rpx;
+  font-weight: bold;
   padding: 24rpx 0;
   color:#e64340;
   margin-left: 24rpx;
@@ -401,4 +402,92 @@
   color: #666;
   font-size: 26rpx;
   text-decoration:line-through
+}
+.title {
+  text-align: left;
+  padding: 10rpx 30rpx;
+  color: #515151;
+  font-size: 22rpx;
+  line-height: 30rpx;
+  background: rgba(216, 30, 6, 0.3);
+}
+
+.goods {
+  position: relative;
+  padding: 20rpx 30rpx;
+  font-size: 36rpx;
+  line-height: 40rpx;
+  border-bottom: 1px solid #f7f7f7;
+}
+
+.goods .pic {
+  float: left;
+  width: 140rpx;
+  height: 140rpx;
+  margin-right: 20rpx;
+  border-radius: 6rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.goods .pic .fresh-tag {
+  position: absolute;
+  top: 15rpx;
+  left: 25rpx;
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.goods .name {
+  color: #000;
+  font-size: 28rpx;
+  line-height: 46rpx;
+  font-weight: bold;
+}
+
+.goods .soldInfo {
+  display: flex;
+  flex-direction: row;
+  width: 350rpx;
+  align-items: flex-start;
+  margin-top: 5rpx;
+}
+
+.goods .soldInfo .good-price-box {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  overflow: hidden;
+  font-size: 22rpx;
+  line-height: 22rpx;
+}
+
+.goods .soldInfo .good-price-box .price {
+  color: #d81e06;
+  /* margin-top: 10rpx; */
+  width: 80rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  line-height: 40rpx;
+}
+
+.goods .soldInfo .good-sales-box {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  overflow: hidden;
+  font-size: 22rpx;
+  line-height: 22rpx;
+}
+.goods .soldInfo .good-sales-box .number {
+  color: #d81e06;
+  padding: 2px;
+  border: 1px solid #d81e06;
+  border-radius: 5rpx;
 }

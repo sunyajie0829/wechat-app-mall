@@ -87,7 +87,7 @@
   ],
   "usingComponents": {
     "float-menu": "/components/float-menu/index",
-    "parser":"/components/parser.20200414.min/parser",
+    "parser": "/components/parser.20200414.min/parser",
     "van-notice-bar": "@vant/weapp/notice-bar/index",
     "van-search": "@vant/weapp/search/index",
     "van-divider": "@vant/weapp/divider/index",

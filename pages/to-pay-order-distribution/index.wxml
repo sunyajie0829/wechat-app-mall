@@ -68,9 +68,21 @@
       </view>
     </view>
     <view class="row-box">
+      <view class="row-label">收件人</view>
+      <view class="right-text">
+        <input class="user-name" type="text" placeholder="收件人姓名" bindinput="userNameInputChange" value="{{userName}}"/>
+      </view>
+    </view>
+    <view class="row-box">
+      <view class="row-label">联系方式</view>
+      <view class="right-text">
+        <input class="user-tel" type="text" placeholder="收件人联系方式" bindinput="userTelInputChange" value="{{userTel}}"/>
+      </view>
+    </view>
+    <view class="row-box">
       <view class="row-label">备注</view>
       <view class="right-text">
-        <input bindinput="remarkChange" type="text" class="liuyan" placeholder="如需备注请输入" />
+        <input bindinput="remarkChange" type="text" class="user-info" placeholder="如需备注请输入" />
       </view>
     </view>
   </view>

@@ -168,10 +168,29 @@ form {
   padding-right: 30rpx;
 }
 
-.peisong-way .liuyan {
+.peisong-way .user-name{
   width: 510rpx;
   font-size: 28rpx;
 }
+
+.peisong-way .user-tel{
+  width: 510rpx;
+  font-size: 28rpx;
+}
+
+.peisong-way .user-info{
+  width: 510rpx;
+  font-size: 28rpx;
+}
+
+.user-name error{
+  border: 2rpx solid red;
+}
+
+.user-tel error{
+  border: 2rpx solid red;
+}
+
 
 .goods-info {
   width: 100%;

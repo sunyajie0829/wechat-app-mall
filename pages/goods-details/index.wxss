@@ -151,7 +151,7 @@ swiper-item image {
   box-shadow:0 0 1rpx 0 ;
   align-items: center;
 }
-.footer-box .contact {
+.footer-box .contact{
   position: relative;
   height: 100%;
   display: flex;

@@ -24,7 +24,9 @@ Page({
     curCouponShowText: '请选择使用优惠券', // 当前选择使用的优惠券
     peisongType: 'zq', // 配送方式 kd,zq 分别表示快递/到店自取
     curTakeDeliveryAddressData: null,
-    remark: ''
+    remark: '',
+    userName: null,
+    userTel: null
   },
   onShow(){
     AUTH.checkHasLogined().then(isLogined => {
@@ -79,6 +81,18 @@ Page({
     this.processYunfei();
   },
   onLoad(e) {
+    var username = wx.getStorageSync('yrj-userName');
+    var userTel = wx.getStorageSync('yrj-userTel');
+    if (username != null){
+      this.setData({
+        userName: username
+      })
+    }
+    if (userTel != null){
+      this.setData({
+        userTel: userTel
+      })
+    }
     let _data = {
       isNeedLogistics: 1
     }
@@ -122,11 +136,45 @@ Page({
   remarkChange(e){
     this.data.remark = e.detail.value
   },
+  userNameInputChange(e){
+    var username = e.detail.value;
+    if (this.validUserName(username)){
+      this.data.userName = username;
+      wx.setStorageSync('yrj-userName', username)
+    }else{
+      this.data.userName = null;
+    }
+  },
+  userTelInputChange(e){
+    var userTel = e.detail.value;
+    if (this.validTel(userTel)){
+      this.data.userTel = userTel;
+      wx.setStorageSync('yrj-userTel', userTel);
+    }else{
+      this.data.userTel = null;
+    }
+  },
   goCreateOrder(){
     if(this.data.curTakeDeliveryAddressData == null){
       wx.hideLoading();
       wx.showToast({
         title: '请选择自提门店',
+        icon: 'none'
+      })
+      return;
+    }
+    if(!this.data.userName || !this.validUserName(this.data.userName)){
+      wx.hideLoading();
+      wx.showToast({
+        title: '请输入收件人姓名',
+        icon: 'none'
+      })
+      return;
+    }
+    if(!this.data.userTel || !this.validTel(this.data.userTel)){
+      wx.hideLoading();
+      wx.showToast({
+        title: '请输入正确的联系方式',
         icon: 'none'
       })
       return;
@@ -190,6 +238,13 @@ Page({
     if(postData.peisongType == 'zq' && that.data.curTakeDeliveryAddressData != null){
       postData.shopIdZt = that.data.curTakeDeliveryAddressData.id;
       postData.shopNameZt = that.data.curTakeDeliveryAddressData.name;
+      postData.linkMan = that.data.userName;
+      postData.mobile = that.data.userTel;
+      postData.extJsonStr = JSON.stringify({
+        "收件人":that.data.userName,
+        "联系方式":that.data.userTel,
+        "自提店铺":that.data.curTakeDeliveryAddressData.name
+      });
     }else{
         return;
     }
@@ -385,5 +440,11 @@ Page({
       return;
     }
     AUTH.register(this);
+  },
+  validTel(e){
+    return /^1[345678]\d{9}$/.test(e);
+  },
+  validUserName(e){
+    return e.length > 0;
   },
 })

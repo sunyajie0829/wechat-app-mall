@@ -21,6 +21,8 @@ Page({
     buyNumMin: 1,
     buyNumMax: 0,
 
+    tmpShareImgPath: '',
+    
     propertyChildIds: "",
     propertyChildNames: "",
     canSubmit: false, //  选中规格尺寸时候是否允许加入购物车
@@ -164,6 +166,7 @@ Page({
         }        
       }
       that.setData(_data);
+      that.drawWXShareImageWithPrice(goodsDetailRes.data.basicInfo.pic);
     }
   },
   async shopSubdetail(shopId){
@@ -492,6 +495,7 @@ Page({
     let _data = {
       title: this.data.goodsDetail.basicInfo.name,
       path: '/pages/goods-details/index?id=' + this.data.goodsDetail.basicInfo.id + '&inviter_id=' + wx.getStorageSync('uid'),
+      imageUrl: this.data.tmpShareImgPath,
       success: function(res) {
         // 转发成功
       },
@@ -504,6 +508,56 @@ Page({
       _data.path += '&kjJoinUid=' + this.data.kjJoinUid
     }
     return _data
+  },
+  drawWXShareImageWithPrice(imgUrl){
+    var that = this;
+    wx.getImageInfo({
+      src: imgUrl,
+      success: function(res){
+        const ctx = wx.createCanvasContext('wxshare');
+        ctx.drawImage(res.path,0,0,300,240);
+
+        ctx.beginPath()
+        ctx.setFillStyle('#FF4500')
+        ctx.moveTo(0,240)
+        ctx.lineTo(0,180)
+        ctx.lineTo(180,180)
+        ctx.lineTo(180,240)
+        ctx.lineTo(0,240)
+        ctx.fill()
+        // ctx.closePath()
+
+        ctx.beginPath()
+        ctx.setFillStyle('#FFD700')
+        ctx.moveTo(180,240)
+        ctx.lineTo(180,180)
+        ctx.lineTo(300,180)
+        ctx.lineTo(300,240)
+        ctx.lineTo(180,240)
+        ctx.fill()
+        ctx.closePath()
+
+        ctx.setTextAlign('left')    // 文字居中
+        ctx.setFillStyle('#FFD700')  // 文字颜色：黑色
+        ctx.setFontSize(30)         // 文字字号：22px
+        ctx.fillText("¥"+that.data.goodsDetail.basicInfo.minPrice, 10, 220)
+
+        ctx.setTextAlign('center')    // 文字居中
+        ctx.setFillStyle('#FFFFFF')  // 文字颜色：黑色
+        ctx.setFontSize(25)         // 文字字号：22px
+        ctx.fillText("立即购买", 240, 220)
+        ctx.draw()
+
+        wx.canvasToTempFilePath({
+          canvasId: "wxshare",
+          success: function(re){
+            that.setData({
+              tmpShareImgPath: re.tempFilePath
+            })
+          }
+        })
+      }
+    })
   },
   reputation: function(goodsId) {
     var that = this;
@@ -779,4 +833,9 @@ Page({
       }
     })
   },
+  goToHomePage(){
+    wx.reLaunch({
+      url: '../index/index',
+    })
+  }
 })
