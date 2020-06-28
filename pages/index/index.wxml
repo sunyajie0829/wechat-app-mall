@@ -108,7 +108,25 @@
   <!-- 秒杀结束 -->
   <van-divider wx:if="{{goodsRecommend.length > 0 && activeCategoryId == 0}}" contentPosition="center">爆品推荐</van-divider> 
   <view class="goods-container" wx:if="{{goodsRecommend.length > 0 && activeCategoryId == 0}}">
-    <view class="goods-box" wx:for="{{goodsRecommend}}" wx:key="id" bindtap="toDetailsTap" data-id="{{item.id}}">
+    <view class="goods" wx:for="{{goodsRecommend}}" wx:key="id">
+      <image mode="aspectFill" class="pic" src="{{item.pic}}" data-id='{{item.id}}' bindtap="toDetailsTap">
+            <!-- <image class='fresh-tag' src="/images/goods-description/fresh.png"></image> -->
+      </image>
+      <view class="name ellipsis" data-id='{{item.id}}' bindtap="toDetailsTap">{{item.name}}</view>
+      <view class='soldInfo'>
+        <view class='good-price-box'>
+          <text class="price">¥{{item.minPrice}}</text>
+          <text wx:if="{{item.originalPrice && item.originalPrice > 0}}" class="goods-price" style='color:#aaa;text-decoration:line-through'>¥ {{item.originalPrice}}</text>
+        </view>
+      </view>
+      <view class='soldInfo'>
+        <view class='good-sales-box'>
+          <text class="number">已售 {{item.numberSells}}件</text>
+        </view>
+      </view>
+      <image data-id="{{item.id}}" bindtap="addShopCar" class="car" src="/images/icon/car.svg"></image>
+    </view>
+    <!-- <view class="goods-box" wx:for="{{goodsRecommend}}" wx:key="id" bindtap="toDetailsTap" data-id="{{item.id}}">
       <view class="img-box">
         <image src="{{item.pic}}" class="image" mode="aspectFill" lazy-load="true" />
       </view>
@@ -117,7 +135,7 @@
         <view class="goods-price">¥ {{item.minPrice}}</view>
         <view wx:if="{{item.originalPrice && item.originalPrice > 0}}" class="goods-price" style='color:#aaa;text-decoration:line-through'>¥ {{item.originalPrice}}</view>
       </view>
-    </view>
+    </view> -->
   </view>
   <!-- <ad unit-id="adunit-588264b3e2362e1e"></ad> -->
   <view wx-if="{{kanjiaList.length > 0 && activeCategoryId == 0}}" class="weui-panel weui-panel_access" style='margin-top:0px;'>
@@ -171,12 +189,12 @@
   </block>
 
   <view class='space'></view>
-  <view class="weui-loadmore weui-loadmore_line">
+  <!-- <view class="weui-loadmore weui-loadmore_line">
     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">商品列表</view>
   </view>
   <view class="goods" wx:for="{{goods}}" wx:key="id">
     <image mode="aspectFill" class="pic" src="{{item.pic}}" data-id='{{item.id}}' bindtap="toDetailsTap">
-          <!-- <image class='fresh-tag' src="/images/goods-description/fresh.png"></image> -->
+          <image class='fresh-tag' src="/images/goods-description/fresh.png"></image>
     </image>
     <view class="name ellipsis" data-id='{{item.id}}' bindtap="toDetailsTap">{{item.name}}</view>
     <view class='soldInfo'>
@@ -190,7 +208,7 @@
         <text class="number">已售 {{item.numberSells}}件</text>
       </view>
     </view>
-  </view>
+  </view> -->
   <!-- <view class="goods-container">
     <view class="goods-box" wx:for="{{goods}}" wx:key="id" bindtap="toDetailsTap" data-id="{{item.id}}">
       <view class="img-box">
@@ -203,9 +221,9 @@
       </view>
     </view>
   </view> -->
-  <view hidden="{{loadingMoreHidden ? true : false}}" class="weui-loadmore weui-loadmore_line" style='margin-top:60rpx;margin-bottom:30rpx;'>
+  <!-- <view hidden="{{loadingMoreHidden ? true : false}}" class="weui-loadmore weui-loadmore_line" style='margin-top:60rpx;margin-bottom:30rpx;'>
     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多啦</view>
-  </view>
+  </view> -->
 </view>
 <!-- <view class='coupons-float' bindtap="goCoupons">
   <image src="/images/gift.png"></image>
@@ -216,3 +234,25 @@
     <image src="/images/live.png"></image>
   </view>
 </navigator>
+
+<block wx:if="{{skuCurGoods}}">
+  <view class="sku-mask"></view>
+  <view class="sku-container">
+    <image class="close" src="/images/icon/close.svg" bindtap="closeSku"></image>
+    <view class="sku" wx:for="{{skuCurGoods.properties}}" wx:key="id">
+      <view class="t">{{item.name}}</view>
+      <view class="items">
+        <text class="{{small.active? 'active' : ''}}" wx:for="{{item.childsCurGoods}}" wx:for-item="small" wx:key="id" data-pid="{{small.propertyId}}" data-id="{{small.id}}" bindtap="skuSelect">{{small.name}}</text>
+      </view>
+    </view>
+    <view class="num">
+      <view class="t">购买数量</view>
+      <view class="num-box">
+        <text class="a" bindtap="storesJian">-</text>
+        <text class="b">{{skuCurGoods.basicInfo.storesBuy}}</text>
+        <text class="a" bindtap="storesJia">+</text>
+      </view>
+    </view>
+  </view>
+  <view class="sku-btn" bindtap="addCarSku">加入购物车</view>
+</block>

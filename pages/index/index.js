@@ -1,5 +1,6 @@
 const WXAPI = require('apifm-wxapi')
 const TOOLS = require('../../utils/tools.js')
+const AUTH = require('../../utils/auth')
 
 const APP = getApp()
 // fixed首次打开不显示标题的bug
@@ -106,10 +107,12 @@ Page({
       res.data.forEach(ele => {
         const _now = new Date().getTime()
         if (ele.dateStart) {
-          ele.dateStartInt = new Date(ele.dateStart).getTime() - _now
+          var startDate = ele.dateStart.replace(/-/g,"/");
+          ele.dateStartInt = new Date(startDate).getTime() - _now
         }
         if (ele.dateEnd) {
-          ele.dateEndInt = new Date(ele.dateEnd).getTime() -_now
+          var endDate = ele.dateEnd.replace(/-/g,"/");
+          ele.dateEndInt = new Date(endDate).getTime() -_now
         }
       })
       this.setData({
@@ -318,5 +321,142 @@ Page({
     wx.navigateTo({
       url: '/pages/goods/list?name=' + this.data.inputVal,
     })
-  }
+  },
+  async addShopCar(e) {
+    const curGood = this.data.goodsRecommend.find(ele => {
+      return ele.id == e.currentTarget.dataset.id
+    })
+    if (!curGood) {
+      return
+    }
+    if (curGood.stores <= 0) {
+      wx.showToast({
+        title: '已售罄~',
+        icon: 'none'
+      })
+      return
+    }
+    this.addShopCarCheck({
+      goodsId: curGood.id,
+      buyNumber: 1,
+      sku: []
+    })
+  },
+  async addShopCarCheck(options){
+    AUTH.checkHasLogined().then(isLogined => {
+      this.setData({
+        wxlogin: isLogined
+      })
+      if (isLogined) {
+        // 处理加入购物车的业务逻辑
+        this.addShopCarDone(options)
+      }
+    })
+  },
+  async addShopCarDone(options){
+    const res = await WXAPI.shippingCarInfoAddItem(wx.getStorageSync('token'), options.goodsId, options.buyNumber, options.sku)
+    if (res.code == 30002) {
+      // 需要选择规格尺寸
+      const skuCurGoodsRes = await WXAPI.goodsDetail(options.goodsId)
+      if (skuCurGoodsRes.code != 0) {
+        wx.showToast({
+          title: skuCurGoodsRes.msg,
+          icon: 'none'
+        })
+        return
+      }
+      wx.hideTabBar()
+      const skuCurGoods = skuCurGoodsRes.data
+      skuCurGoods.basicInfo.storesBuy = 1
+      this.setData({
+        skuCurGoods
+      })
+      return
+    }
+    if (res.code != 0) {
+      wx.showToast({
+        title: res.msg,
+        icon: 'none'
+      })
+      return
+    }
+    wx.showToast({
+      title: '加入成功',
+      icon: 'success'
+    })
+    this.setData({
+      skuCurGoods: null
+    })
+    wx.showTabBar()
+    TOOLS.showTabBarBadge() // 获取购物车数据，显示TabBarBadge
+  },
+  storesJia(){
+    const skuCurGoods = this.data.skuCurGoods
+    if (skuCurGoods.basicInfo.storesBuy < skuCurGoods.basicInfo.stores) {
+      skuCurGoods.basicInfo.storesBuy++
+      this.setData({
+        skuCurGoods
+      })
+    }
+  },
+  storesJian(){
+    const skuCurGoods = this.data.skuCurGoods
+    if (skuCurGoods.basicInfo.storesBuy > 1) {
+      skuCurGoods.basicInfo.storesBuy--
+      this.setData({
+        skuCurGoods
+      })
+    }
+  },
+  closeSku(){
+    this.setData({
+      skuCurGoods: null
+    })
+    wx.showTabBar()
+  },
+  skuSelect(e){
+    const pid = e.currentTarget.dataset.pid
+    const id = e.currentTarget.dataset.id
+    // 处理选中
+    const skuCurGoods = this.data.skuCurGoods
+    const property = skuCurGoods.properties.find(ele => {return ele.id == pid})
+    property.childsCurGoods.forEach(ele => {
+      if (ele.id == id) {
+        ele.active = true
+      } else {
+        ele.active = false
+      }
+    })
+    this.setData({
+      skuCurGoods
+    })
+  },
+  addCarSku(){
+    const skuCurGoods = this.data.skuCurGoods
+    const propertySize = skuCurGoods.properties.length // 有几组SKU
+    const sku = []
+    skuCurGoods.properties.forEach(p => {
+      const o = p.childsCurGoods.find(ele => {return ele.active})
+      if (!o) {        
+        return
+      }
+      sku.push({
+        optionId: o.propertyId,
+        optionValueId: o.id
+      })
+    })
+    if (sku.length != propertySize) {
+      wx.showToast({
+        title: '请选择规格',
+        icon: 'none'
+      })
+      return
+    }
+    const options = {
+      goodsId: skuCurGoods.basicInfo.id,
+      buyNumber: skuCurGoods.basicInfo.storesBuy,
+      sku
+    }
+    this.addShopCarDone(options)
+  },
 })
