@@ -22,7 +22,11 @@
       </scroll-view>
       <view class="goods-price">
         共 {{item.goodsNumber}} 件商品 合计：
-        <text class="p" wx:if="{{item.score <= 0}}">¥ {{item.amountReal}}</text>
+        <text class="p" wx:if="{{item.score <= 0}}">¥ {{item.amountReal}}
+          <text class="pp" wx:if="{{item.pingtuanOpenId > 0 && item.isSuccessPingtuan}}">已成团</text>
+          <text class="pp" wx:if="{{item.pingtuanOpenId > 0 && !item.isSuccessPingtuan}}">等待成团</text>
+        </text>
+        <!-- <text class="p" wx:if="{{item.score <= 0}}">¥ {{item.amountReal}}</text> -->
         <text class="p" wx:if="{{item.score > 0}}">¥ {{item.amountReal}} + {{item.score}} 积分</text>
       </view>
       <view class="goods-info">

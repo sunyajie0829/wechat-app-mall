@@ -72,6 +72,10 @@
   font-size:36rpx;
   color:#e64340;
 }
+.goods-price .pp {
+    font-size:26rpx;
+    color:#e64340;
+  }
 .goods-info .img-box{
     width: 120rpx;
     height: 120rpx;
